@@ -1,7 +1,12 @@
 <script lang="ts">
   import { useMyTableStore } from '@/stores/mytable'
+  import { formatDate } from '@/utils'
+  import { VDateInput } from 'vuetify/labs/VDateInput'
 
   export default {
+    components: {
+      VDateInput,
+    },
     data: () => ({
       dialog: false,
       dialogDelete: false,
@@ -30,9 +35,9 @@
         id: '',
         name: '',
         department: '',
-        sex: '',
+        sex: null,
         age: '',
-        dateTime: '',
+        dateTime: null,
         phone: '',
         address: '',
         description: '',
@@ -110,6 +115,8 @@
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
           this.editedItem.status = '在职'
+          this.editedItem.dateTime = formatDate(this.editedItem.dateTime)
+          console.log("this.editedItem", this.editedItem)
           this.desserts.push(this.editedItem)
         }
         this.close()
@@ -132,6 +139,7 @@
         <v-toolbar-title>员工管理</v-toolbar-title>
         <v-text-field
           v-model="search"
+          color="primary"
           density="compact"
           flat
           hide-details
@@ -155,6 +163,7 @@
               class="mb-2"
               color="primary"
               dark
+              rounded
               v-bind="props"
             >
               新增员工
@@ -167,112 +176,79 @@
 
             <v-card-text>
               <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.id"
-                      label="编号"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="姓名"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.department"
-                      label="部门"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.sex"
-                      label="性别"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.age"
-                      label="年龄"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.dateTime"
-                      label="入职日期"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.phone"
-                      label="联系方式"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.address"
-                      label="住址"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.description"
-                      label="备注"
-                    />
-                  </v-col>
-                </v-row>
+                <v-text-field
+                  v-model="editedItem.id"
+                  color="primary"
+                  :disabled="formTitle === '编辑员工信息'"
+                  label="编号"
+                  variant="outlined"
+                />
+                <v-text-field
+                  v-model="editedItem.name"
+                  color="primary"
+                  label="姓名"
+                  variant="outlined"
+                />
+                <v-text-field
+                  v-model="editedItem.department"
+                  color="primary"
+                  label="部门"
+                  variant="outlined"
+                />
+                <v-select
+                  v-model="editedItem.sex"
+                  color="primary"
+                  :items="['男', '女']"
+                  label="性别"
+                  variant="outlined"
+                />
+                <v-text-field
+                  v-model="editedItem.age"
+                  color="primary"
+                  label="年龄"
+                  type="number"
+                  variant="outlined"
+                />
+                <v-date-input
+                  v-model="editedItem.dateTime"
+                  color="primary"
+                  label="入职日期"
+                  prepend-icon=""
+                  prepend-inner-icon="$calendar"
+                  variant="outlined"
+                />
+                <v-text-field
+                  v-model="editedItem.phone"
+                  color="primary"
+                  label="联系方式"
+                  variant="outlined"
+                />
+                <v-text-field
+                  v-model="editedItem.address"
+                  color="primary"
+                  label="住址"
+                  variant="outlined"
+                />
+                <v-text-field
+                  v-model="editedItem.description"
+                  color="primary"
+                  label="备注"
+                  variant="outlined"
+                />
               </v-container>
             </v-card-text>
 
             <v-card-actions>
               <v-spacer />
               <v-btn
-                color="blue-darken-1"
+                color="primary"
                 variant="text"
                 @click="close"
               >
                 取消
               </v-btn>
               <v-btn
-                color="blue-darken-1"
+                color="primary"
                 variant="text"
                 @click="save"
               >
@@ -286,8 +262,8 @@
             <v-card-title class="text-h5">请问你确定要删除这条数据吗？</v-card-title>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">取消</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">确定</v-btn>
+              <v-btn color="primary" variant="text" @click="closeDelete">取消</v-btn>
+              <v-btn color="primary" variant="text" @click="deleteItemConfirm">确定</v-btn>
               <v-spacer />
             </v-card-actions>
           </v-card>
@@ -310,12 +286,19 @@
       </v-icon>
     </template>
     <template #no-data>
-      <v-btn
-        color="primary"
-        @click="initialize"
-      >
-        Reset
-      </v-btn>
+      <v-empty-state image="https://cdn.vuetifyjs.com/docs/images/components/v-empty-state/teamwork.png" style="margin-top: 130px">
+        <template #title>
+          <div class="text-subtitle-2 mt-8">
+            暂时无数据
+          </div>
+        </template>
+
+        <template #text>
+          <div class="text-caption">
+            Track and receive your incoming inventory from suppliers
+          </div>
+        </template>
+      </v-empty-state>
     </template>
   </v-data-table>
 </template>
